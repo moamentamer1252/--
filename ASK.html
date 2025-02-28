@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أسئلة دينية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;700&family=Tajawal:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(to bottom, #0d1b2a, #1b263b);
+            color: #f8f9fa;
+            direction: rtl;
+            text-align: center;
+            margin: 0;
+            padding-top: 70px;
+        }
+
+        /* ✅ شريط التنقل */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #16213E;
+            color: #ffcc66;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+        }
+
+        /* ✅ عرض الدرجة في الأعلى */
+        #score {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto 20px;
+            background: rgba(27, 38, 59, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            font-family: 'Reem Kufi', sans-serif;
+            color: #ffcc66;
+            font-size: 28px;
+            text-shadow: 0 0 20px rgba(255, 204, 102, 0.6);
+        }
+
+        .question {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .answer {
+            background: linear-gradient(145deg, #2c3e50, #1b263b);
+            color: #ffcc66;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            border: 2px solid rgba(255, 204, 102, 0.4);
+        }
+
+        .answer:hover {
+            background: rgba(44, 62, 80, 0.9);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 204, 102, 0.5);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .result img {
+            width: 50px;
+            transform: translateY(20px);
+        }
+        .navbar {
+            background: rgba(13, 27, 42, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .nav-item {
+            color: #ffcc66;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            white-space: nowrap;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-3px);
+            border-radius: 15px;
+            background: rgba(255, 204, 102, 0.2);
+            border-color: #ffcc66;
+            box-shadow: 0 0 10px rgba(255, 204, 102, 0.5);
+        }
+        .next-btn {
+            background: #ffcc66;
+            color: #1b263b;
+            font-size: 18px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: none;
+            transition: all 0.3s ease-in-out;
+            border: none;
+        }
+
+        .next-btn:hover {
+            background: #ffd480;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-item">السور</a>
+            <a href="index 2.html" class="nav-item">الأدوات</a>
+            <a href="Time.html" class="nav-item">أوقات الصلاة</a>
+        </div>
+    </nav>
+    <!-- ✅ عرض الدرجة في الأعلى -->
+    <div style="transform: translateY(30px);" id="score">الدرجة: 0 / 20</div>
+
+    <div class="container">
+        <h1>اختبار المعلومات الدينية</h1>
+        <p class="question" id="question">...</p>
+        <div class="answers" id="answers"></div>
+        <div class="result" id="result"></div>
+        <button class="next-btn" id="next-btn">السؤال التالي</button>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                question: "ما هي أول سورة نزلت في القرآن؟",
+                answers: ["الفاتحة", "العلق", "الناس", "البقرة"],
+                correct: 1
+            },
+            {
+                question: "كم عدد أركان الإسلام؟",
+                answers: ["3", "4", "5", "6"],
+                correct: 2
+            },
+            {
+                question: "من هو أول نبي أرسل إلى البشر؟",
+                answers: ["إبراهيم", "موسى", "آدم", "نوح"],
+                correct: 3
+            },
+            {
+                question: "ما هو الركن الأول من أركان الإسلام؟",
+                answers: ["الصلاة", "الزكاة", "الشهادتان", "الصيام"],
+                correct: 2
+            },
+            {
+                question: "ما هي السورة التي تسمى 'قلب القرآن'؟",
+                answers: ["الفاتحة", "البقرة", "يس", "الكهف"],
+                correct: 2
+            },
+            {
+                question: "من هو الصحابي الذي لقب ب 'سيف الله المسلول'؟",
+                answers: ["عمر بن الخطاب", "خالد بن الوليد", "علي بن أبي طالب", "أبو بكر الصديق"],
+                correct: 1
+            },
+            {
+                question: "ما هي أطول سورة في القرآن الكريم؟",
+                answers: ["البقرة", "آل عمران", "النساء", "المائدة"],
+                correct: 0
+            },
+            {
+                question: "كم عدد السجدات في القرآن الكريم؟",
+                answers: ["10", "12", "14", "15"],
+                correct: 3
+            },
+            {
+                question: "من هو النبي الذي سمي 'خليل الله'؟",
+                answers: ["إبراهيم", "موسى", "عيسى", "نوح"],
+                correct: 0
+            },
+            {
+                question: "ما هي السورة التي تسمى 'عروس القرآن'؟",
+                answers: ["الرحمن", "الواقعة", "النبأ", "القدر"],
+                correct: 0
+            },
+            {
+                question: "من هو النبي الذي ألقاه قومه في النار؟",
+                answers: ["إبراهيم", "يونس", "لوط", "إسماعيل"],
+                correct: 0
+            },
+            {
+                question: "ما هي السورة التي تسمى 'الساهرة' أو 'الطامة'؟",
+                answers: ["القيامة", "النبأ", "التكوير", "الانفطار"],
+                correct: 0
+            },
+            {
+                question: "من هو الصحابي الذي استشهد في معركة بدر؟",
+                answers: ["حمزة بن عبد المطلب", "علي بن أبي طالب", "عمر بن الخطاب", "أبو بكر الصديق"],
+                correct: 0
+            },
+            {
+                question: "ما هي السورة التي تسمى 'الفاضحة'؟",
+                answers: ["التوبة", "المنافقون", "المجادلة", "التحريم"],
+                correct: 2
+            },
+            {
+                question: "ما هي السورة التي تسمى 'السابعة الطوال'؟",
+                answers: ["البقرة", "آل عمران", "النساء", "المائدة"],
+                correct: 0
+            },
+            {
+                question: "من هو الصحابي الذي لقب ب 'ترجمان القرآن'؟",
+                answers: ["عبد الله بن عباس", "عبد الله بن مسعود", "زيد بن ثابت", "أبو هريرة"],
+                correct: 0
+            },
+            {
+                question: "ما هي السورة التي تسمى 'المنجية'؟",
+                answers: ["الملك", "الواقعة", "يس", "الدخان"],
+                correct: 0
+            },
+            {
+                question: "من هو النبي الذي صام عن الكلام ثلاثة أيام؟",
+                answers: ["زكريا", "يونس", "إبراهيم", "داود"],
+                correct: 0
+            },
+            {
+                question: "ما هي السورة التي تسمى 'السبع المثاني'؟",
+                answers: ["الفاتحة", "البقرة", "العلق", "الكهف"],
+                correct: 0
+            },
+            {
+                question: "من هو الصحابي الذي لقب ب 'حبر الأمة'؟",
+                answers: ["عبد الله بن عباس", "عبد الله بن مسعود", "زيد بن ثابت", "أبو هريرة"],
+                correct: 0
+            },
+            {
+                question: "ما هي السورة التي تسمى 'الزهراء'؟",
+                answers: ["الفاتحة", "البقرة", "العلق", "الكهف"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("next-btn").style.display = "none";
+            const q = questions[currentQuestion];
+            document.getElementById("question").textContent = q.question;
+            const answersDiv = document.getElementById("answers");
+            answersDiv.innerHTML = "";
+            q.answers.forEach((answer, index) => {
+                const button = document.createElement("div");
+                button.classList.add("answer");
+                button.textContent = answer;
+                button.onclick = () => checkAnswer(index);
+                answersDiv.appendChild(button);
+            });
+        }
+
+        function checkAnswer(index) {
+            const resultDiv = document.getElementById("result");
+            const correctAnswer = questions[currentQuestion].answers[questions[currentQuestion].correct];
+
+            if (index === questions[currentQuestion].correct) {
+                resultDiv.innerHTML = "إجابة صحيحة! <img src='https://static.vecteezy.com/system/resources/previews/009/591/886/original/check-mark-icon-free-png.png' alt='صح'>";
+                score++;
+            } else {
+                resultDiv.innerHTML = `إجابة خاطئة! الإجابة الصحيحة هي: <strong>${correctAnswer}</strong> <img src='https://static.vecteezy.com/system/resources/thumbnails/024/386/081/small_2x/right-and-wrong-mark-doodle-hand-drawn-png.png' alt='خطأ'>`;
+            }
+            document.getElementById("next-btn").style.display = "block";
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById("score").textContent = `الدرجة: ${score} / ${questions.length}`;
+        }
+
+        document.getElementById("next-btn").onclick = () => {
+            currentQuestion = (currentQuestion + 1) % questions.length;
+            loadQuestion();
+        };
+
+        loadQuestion();
+    </script>
+
+</body>
+</html>

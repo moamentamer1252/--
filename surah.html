@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض السورة بالصفحات</title>
+    
+    <!-- استيراد الخطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            color: white;
+            direction: rtl;
+            text-align: center;
+            font-family: 'Scheherazade', 'Amiri', serif; /* تطبيق الخط على جميع الصفحة */
+            background: #1b263b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sura-container {
+            width: 80%;
+            max-width: 300px;
+            height: 80px;
+            background: url('WhatsApp_Image_2025-02-10_at_1.22.08_PM-removebg-preview.png') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .quran-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 90%;
+            height: 95%;
+            padding: 20px;
+            background: #1b263b;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            border-radius: 10px;
+            position: relative;
+            animation: glow 5s infinite alternate;
+            overflow-y: auto;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+            100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+        }
+
+        .bismillah {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: white;
+            font-family: 'Amiri', serif;
+        }
+
+        .ayah {
+            font-size: 22px;
+            line-height: 2;
+            font-family: 'Vazirmatn', sans-serif; /* استخدام الخط العربي الجميل */
+            color: white;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        .ayah-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffcc66;
+        }
+
+        .page-number {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .pagination {
+            margin-top: 15px;
+        }
+
+        .pagination button {
+            border-radius: 5px;
+            font-size: 18px;
+            padding: 10px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .pagination button:hover {
+            background: #ffcc66;
+            color: black;
+        }
+
+        .pagination button:disabled {
+            background: #555;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 40px;
+            color: #ff6347;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #ff0000;
+        }
+
+        @media screen and (max-width: 768px) {
+            .quran-page {
+                padding: 15px;
+                height: 90%;
+                overflow-y: scroll;
+            }
+
+            .sura-container {
+                font-size: 25px;
+                height: 80px;
+                
+            }
+
+            .bismillah {
+                font-size: 22px;
+            }
+
+            .ayah {
+                font-size: 18px;
+            }
+
+            .ayah-number {
+                font-size: 16px;
+            }
+
+            .page-number {
+                font-size: 18px;
+            }
+
+            .pagination button {
+                font-size: 16px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quran-page">
+        <button class="close-btn" onclick="goHome()">×</button>
+        <div class="sura-container" id="sura-name">سورة البقرة</div>
+        <div id="verses-container"></div>
+        <div class="page-number" id="page-number">الصفحة: 1</div>
+
+        <div class="pagination">
+            <button id="prev-btn" onclick="navigatePage('prev')">السابق</button>
+            <button id="next-btn" onclick="navigatePage('next')">التالي</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 0;
+        let versesData = [];
+        const versesPerPage = 10;
+
+        async function fetchVerses() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const surahNumber = urlParams.get('number') || 2;
+
+            try {
+                const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`);
+                if (!response.ok) throw new Error("فشل تحميل بيانات السورة");
+
+                const data = await response.json();
+                document.getElementById('sura-name').textContent = data.data.name;
+                versesData = data.data.ayahs;
+
+                totalPages = Math.ceil(versesData.length / versesPerPage);
+                displayPage(currentPage);
+            } catch (error) {
+                document.getElementById('verses-container').innerHTML = "<p>حدث خطأ أثناء تحميل السورة.</p>";
+            }
+        }
+
+        function displayPage(page) {
+            document.getElementById('page-number').textContent = `الصفحة: ${page}`;
+            const startIndex = (page - 1) * versesPerPage;
+            const versesContainer = document.getElementById('verses-container');
+            versesContainer.innerHTML = '';
+
+            versesData.slice(startIndex, startIndex + versesPerPage).forEach(verse => {
+                versesContainer.innerHTML += `<div class="ayah">${verse.text} <span class="ayah-number">﴿${verse.numberInSurah}﴾</span></div>`;
+            });
+
+            document.getElementById('prev-btn').disabled = page === 1;
+            document.getElementById('next-btn').disabled = page === totalPages;
+        }
+
+        function navigatePage(direction) {
+            if (direction === 'prev' && currentPage > 1) currentPage--;
+            else if (direction === 'next' && currentPage < totalPages) currentPage++;
+            displayPage(currentPage);
+        }
+
+        function goHome() { window.location.href = "index.html"; }
+
+        document.addEventListener("DOMContentLoaded", fetchVerses);
+    </script>
+</body>
+</html>
