@@ -180,6 +180,7 @@
 
 
         @media (max-width: 768px) {
+            
             .nav-container {
                 gap: 10px;
             }
@@ -198,6 +199,11 @@
                 font-size: 18px;
                 padding: 15px 15px;
             }
+            #search-bar {
+        width: 90%;
+        max-width: none;
+        font-size: 16px;
+        padding: 10px;
         }
     </style>
 </head>
@@ -217,7 +223,7 @@
             <span class="line long"></span>
             <span class="line medium"></span>
         </div>
-        <input type="text" id="search-bar" placeholder="ابحث عن سورة...  لكن يرجى العلم أن اسم السورة بالتشكيل." oninput="filterSurahs()" />
+        <input type="text" id="search-bar" placeholder="ابحث لكن يرجى العلم أن اسم السورة بالتشكيل." oninput="filterSurahs()" />
 
         <div class="suras" id="suras-container">
             <!-- سيتم إضافة أسماء السور هنا عبر JavaScript -->
