@@ -92,7 +92,15 @@
     color: black;
     text-align: center;
 }
+@font-face {
+    font-family: 'QuranFont';
+    src: url('fonts/QuranFont.woff2') format('woff2');
+}
 
+.quran-text {
+    font-family: 'QuranFont', 'Amiri', serif;
+    direction: rtl;
+}
         .close-btn {
             position: absolute;
             top: 10px;
@@ -117,7 +125,7 @@
                 height: 70px;
             }
             .ayah-container {
-                font-size: 24px;
+                font-size: 22px;
             }
             .ayah-number {
                 font-size: 16px;
