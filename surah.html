@@ -25,10 +25,11 @@
     max-width: 300px;
     height: 100px;
     background: url('WhatsApp_Image_2025-03-21_at_1.08.16_PM-removebg-preview.png') no-repeat center center;
-    background-size: cover; /* تغطية كاملة */
+    background-size: contain; /* عشان الصورة تظهر بالكامل بدون قص */
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* يرفع النص لأعلى */
     justify-content: center;
+    padding-top: 5px; /* رفع النص لفوق */
     font-size: 28px;
     font-weight: bold;
     color: white;
@@ -36,6 +37,7 @@
     position: relative;
     margin-bottom: 15px;
 }
+
         .quran-page {
             display: flex;
             flex-direction: column;
@@ -109,7 +111,6 @@
         }
         @media screen and (max-width: 768px) {
     .sura-container {
-        transform: translateY(-50);
         max-width: 200px;
         height: 80px;
         font-size: 24px;
