@@ -9,7 +9,6 @@
 
     <style>
         body {
-            font-family: 'Lateef', serif;
             color: white;
             direction: rtl;
             text-align: center;
@@ -24,6 +23,8 @@
         }
         .sura-container {
             width: 90%;
+            font-family: 'Lateef', serif;
+
             max-width: 300px;
             height: 150px;
             background: url('https://static.vecteezy.com/system/resources/previews/028/296/888/non_2x/luxury-golden-arabic-islamic-banner-title-frame-text-box-in-transparent-background-free-png.png') no-repeat center center;
@@ -34,7 +35,7 @@
             font-size: 28px;
             font-weight: bold;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-shadow: 2px rgba(255, 255, 255, 0.849);
             position: relative;
             margin-bottom: 15px;
         }
@@ -59,6 +60,8 @@
             100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
         }
         .ayah-container {
+            word-spacing: 1px;
+            font-family: 'Lateef', serif;
             font-size: 28px;
             line-height: 1.8;
             color: beige;
@@ -108,80 +111,87 @@
             }
         }
         .first-words {
-            font-size: 27px;
-            color: rgb(209, 209, 209);
-            font-weight: bold;
-            font-family: 'Lateef', 'Aref Ruqaa', serif;
-            transform: translateY(-9px);
-        }
+    font-size: 24px;
+    color:#376cc9; 
+    transform: translateY(-13px);
+    font-family: 'Diwani Letter', 'Arabic Typesetting', 'Traditional Arabic', serif;
+}
+
     </style>
 </head>
 <body>
     <div class="quran-page">
         <button class="close-btn" onclick="goHome()">×</button>
-        <div class="sura-container" id="sura-name">جاري التحميل...</div>
-        <div class="first-words" id="first-words">جارٍ التحميل...</div>
+        <div class="sura-container" id="sura-name">جارٍ التحميل...</div>
+        <div class="first-words" id="first-words"></div>
         <div id="verses-container" class="ayah-container"></div>
     </div>
+
+
     <script>
-       async function fetchVerses() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const surahNumber = urlParams.get('number') || 2;
-
-    try {
-        const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`);
-        if (!response.ok) throw new Error("فشل تحميل بيانات السورة");
-
-        const data = await response.json();
-
-        document.getElementById('sura-name').textContent = data.data.name;
-
-        // استخراج أول أربع كلمات من أول آية
-        const firstVerseText = data.data.ayahs[0].text;
-        const firstWords = getFirstWords(firstVerseText);
-
-        // التحقق مما إذا كان هناك عنصر بهذا المعرف قبل محاولة تعيين النص
-        const firstWordsElement = document.getElementById('first-words');
-        if (firstWordsElement) {
-            firstWordsElement.textContent = firstWords;
-        }
-
-        // حذف أول ٤ كلمات من أول آية ثم عرض باقي الآيات
-        data.data.ayahs[0].text = removeFirstWords(firstVerseText);
-        displayVerses(data.data.ayahs);
-    } catch (error) {
-        document.getElementById('verses-container').innerHTML = "<p>حدث خطأ أثناء تحميل السورة.</p>";
-        console.error("خطأ في تحميل السورة:", error);
-    }
-}
-
-function getFirstWords(text) {
-    return text.split(" ").slice(0, 4).join(" "); // استخراج أول ٤ كلمات
-}
-
-function removeFirstWords(text) {
-    return text.split(" ").slice(4).join(" "); // حذف أول ٤ كلمات
-}
-
-function displayVerses(verses) {
-            const versesContainer = document.getElementById('verses-container');
-            versesContainer.innerHTML = verses
-                .map(verse => {
-                    return `${verse.text} 
-                        <span class="ayah-number">
-                            <img src="WhatsApp_Image_2025-03-21_at_8.06.46_PM-removebg-preview.png" class="ayah-icon">
-                            <span class="ayah-text">${verse.numberInSurah.toLocaleString('ar-EG')}</span>
-                        </span>`;
-                })
-                .join(' ');
-        }
-
-function goHome() {
-    window.location.href = "index.html";
-}
-
-document.addEventListener("DOMContentLoaded", fetchVerses);
-
-    </script>
+        async function fetchVerses() {
+     const urlParams = new URLSearchParams(window.location.search);
+     const surahNumber = urlParams.get('number') || 2;
+     
+     try {
+         const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`);
+         if (!response.ok) throw new Error("فشل تحميل بيانات السورة");
+     
+         const data = await response.json();
+     
+         document.getElementById('sura-name').textContent = data.data.name;
+     
+         // استخراج أول أربع كلمات من أول آية
+         const firstVerseText = data.data.ayahs[0].text;
+         let firstWords = "";
+         
+         // استثناء سورة التوبة والفاتحة من التعديل
+         if (surahNumber !== "9" && surahNumber !== "1") {
+             firstWords = getFirstWords(firstVerseText);
+             // التحقق مما إذا كان هناك عنصر بهذا المعرف قبل محاولة تعيين النص
+             const firstWordsElement = document.getElementById('first-words');
+             if (firstWordsElement) {
+                 firstWordsElement.textContent = firstWords;
+             }
+             
+             // حذف أول ٤ كلمات من أول آية فقط إن لم تكن السورة هي التوبة أو الفاتحة
+             data.data.ayahs[0].text = removeFirstWords(firstVerseText);
+         }
+     
+         displayVerses(data.data.ayahs);
+     } catch (error) {
+         document.getElementById('verses-container').innerHTML = "<p>حدث خطأ أثناء تحميل السورة.</p>";
+         console.error("خطأ في تحميل السورة:", error);
+     }
+     }
+     
+     function getFirstWords(text) {
+         return text.split(" ").slice(0, 4).join(" "); // استخراج أول ٤ كلمات
+     }
+     
+     function removeFirstWords(text) {
+         return text.split(" ").slice(4).join(" "); // حذف أول ٤ كلمات
+     }
+     
+     function displayVerses(verses) {
+         const versesContainer = document.getElementById('verses-container');
+         versesContainer.innerHTML = verses
+             .map(verse => {
+                 return `${verse.text} 
+                     <span class="ayah-number">
+                         <img src="WhatsApp_Image_2025-03-21_at_8.06.46_PM-removebg-preview.png" class="ayah-icon">
+                         <span class="ayah-text">${verse.numberInSurah.toLocaleString('ar-EG')}</span>
+                     </span>`;
+             })
+             .join(' ');
+     }
+     
+     function goHome() {
+         window.location.href = "index.html";
+     }
+     
+     document.addEventListener("DOMContentLoaded", fetchVerses);
+     </script>
+     
 </body>
 </html>
