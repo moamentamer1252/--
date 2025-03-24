@@ -44,20 +44,20 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            width: 90%;
+            width: 85%;
             height: 95%;
             padding: 20px;
             background: #1b263b;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
             border-radius: 10px;
             position: relative;
-            animation: glow 10s infinite alternate;
+            animation: glow 8s infinite alternate;
             overflow-y: auto;
         }
         @keyframes glow {
-            0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+            0% { box-shadow: 0 0 10px rgba(255, 217, 0, 0.726); }
             50% { box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
-            100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+            100% { box-shadow: 0 0 10px rgba(255, 217, 0, 0.726); }
         }
         .ayah-container {
             word-spacing: 1px;
@@ -113,15 +113,49 @@
         .first-words {
     font-size: 26px;
     color:#376cc9; 
-    transform: translateY(-10px);
+    transform: translateY(-8px);
     font-family:'Lateef', serif ;
 }
+.dark-mode-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ffa500;
+            color: black;
+            font-size: 14px;
+            padding: 3px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 5px rgba(255, 165, 0, 0.8);
+        }
+        .dark-mode-btn:hover {
+            background: #ffcc00;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 1);
+        }
+        .dark-mode {
+            background: black;
+        }
+        .dark-mode .quran-page {
+            background: black;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+        .dark-mode .ayah-container {
+            color: #f1f1f1;
+        }
 
     </style>
 </head>
 <body>
     <div class="quran-page">
         <button class="close-btn" onclick="goHome()">×</button>
+        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
         <div class="sura-container" id="sura-name">جارٍ التحميل...</div>
         <div class="first-words" id="first-words"></div>
         <div id="verses-container" class="ayah-container"></div>
@@ -186,11 +220,15 @@
              .join(' ');
      }
      
-     function goHome() {
-         window.location.href = "index.html";
-     }
-     
-     document.addEventListener("DOMContentLoaded", fetchVerses);
+
+        
+        document.addEventListener("DOMContentLoaded", fetchVerses);
+        function goHome() {
+            window.location.href = "index.html";
+        }
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
      </script>
      
 </body>
